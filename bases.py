@@ -2,8 +2,6 @@ import sys
 import pygame
 import refait
 
-BACKGROUND_COLOR = (0,0,0) # = black
-
 pygame.init()
 
 # les classes
@@ -43,13 +41,13 @@ class Button:
             self.change_text()
 
 class icon:
-    def __init__(self, img, rect, screen):
+    def __init__(self, img, rect, screen, mark_color, background_color, mark_thickness):
         self.img = img
-        self.img.fill((255, 255, 0))
         self.rect = rect
-        self.mark_rect_blit = False
-        self.mark_color = (140, 140, 137) # = Gris
+        self.mark_color = mark_color #(140, 140, 137) # = Gris
+        self.background_color = background_color
         self.screen = screen
+        self.mark_thickness = mark_thickness
 
     def is_colliding(self, position):
         if self.rect.collidepoint(position):
@@ -61,15 +59,10 @@ class icon:
             self.react_to_collision()
     
     def react_to_collision(self):
-        if not self.mark_rect_blit: # si le "surlignage" n'est pas activé
-                self.mark_rect(self.mark_color)
-                self.mark_rect_blit = True
-        else:
-            self.mark_rect((0,0,0))
-            self.mark_rect_blit = False
-        
+        self.mark_rect(self.mark_color)
+
     def mark_rect(self, color):
-        pygame.draw.rect(self.screen, color, self.rect, 7)
+        pygame.draw.rect(self.screen, color, self.rect, self.mark_thickness)
     
     def draw(self):
         screen.blit(self.img, (self.rect.x, self.rect.y))
@@ -98,8 +91,8 @@ class icons: # [+] faire la sélection au clavier
                 self.mark_selected_icon()
     
     def mark_selected_icon(self):
-        self.icon_list[self.activated_icon_index].mark_rect((140, 140, 137)) # GRIS
-        self.icon_list[self.old_icon_index].mark_rect((0,0,0))
+        self.icon_list[self.activated_icon_index].mark_rect(self.icon_list[self.activated_icon_index].mark_color) # GRIS
+        self.icon_list[self.old_icon_index].mark_rect(self.icon_list[self.activated_icon_index].background_color) # BLACK
     
     def change_to_right(self):
         self.actualize_old_icon()
@@ -129,9 +122,12 @@ GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 YELLOW = (255, 255, 0)
 GRIS = (140, 140, 137)
+BLACK = (0,0,0)
 Rects_dic = {} # { ID : [RECT, COLOR, FILL] } || if BUTTON: { ID: [RECT, <class 'Button'>, FILL]}
 ID_dic = {} #    { ID : TYPE_OF_RECT}  (= BUTTON, RECT, ...)
 ECARTEMENT = 10 # 10 px du bord // des autres objets // ...
+BACKGROUND_COLOR = BLACK
+MARK_THICKNESS = 7
 
 screen = pygame.display.set_mode(SCREEN_SIZE)
 running = True
@@ -139,15 +135,14 @@ running = True
 # Choix de la disposition et de la taille des éléments sur l'écran, de la façon la plus modulable possible (= en fonction de la taille de la fenetre)
 character_rect = pygame.Rect((int(ECARTEMENT), int(ECARTEMENT)), (int(SCREEN_SIZE[0]/2.5), int(SCREEN_SIZE[1]*0.75))) # (x,y),(width, height)
 ideology_rect = pygame.Rect((character_rect.x, 2*character_rect.y+character_rect.height), (character_rect.width, SCREEN_SIZE[1]-(3*character_rect.y+character_rect.height)))
-#valid_rect = pygame.Rect(()) # choisir l'emplacement !!!!!!!!!
 
 ent_img = pygame.Surface((50,50))
 ent_img.fill(BLUE)
-ent_butt0 = icon(ent_img, pygame.Rect(0,0, 50, 50), screen)
+ent_butt0 = icon(ent_img, pygame.Rect(0,0, 50, 50), screen, GRIS, BACKGROUND_COLOR, MARK_THICKNESS)
 
-ent_butt1 = icon(ent_img, pygame.Rect(60,0, 50, 50), screen)
+ent_butt1 = icon(ent_img, pygame.Rect(60,0, 50, 50), screen, GRIS, BACKGROUND_COLOR, MARK_THICKNESS)
 
-ent_butt2 = icon(ent_img, pygame.Rect(120,0, 50, 50), screen)
+ent_butt2 = icon(ent_img, pygame.Rect(120,0, 50, 50), screen, GRIS, BACKGROUND_COLOR, MARK_THICKNESS)
 
 real_icons = icons([ent_butt0, ent_butt1, ent_butt2])
 
@@ -177,20 +172,3 @@ ID_dic[get_highest_ID(ID_dic)+1] = "RECT"
 
 Rects_dic[get_highest_ID(ID_dic)+1] = [ideology_rect, WHITE, 1]
 ID_dic[get_highest_ID(ID_dic)+1] = "RECT"
-
-# déclaration des éléments qui seront utilisés 
-
-"""
-Valid_button =    Button(Valid_button_box, [GREEN, RED], GREEN, ["Valider", "Sur ?"], "Valider")
-Ideology_button = Button(Ideology_button_box, [GREEN, RED, YELLOW], RED, ["GENTIL", "Mechant", "Compliqué"], "Gentil")
-icon_entity = entity_icon(icon_entity_img, icon_entity_box, screen)
-
-
-
-Rects_dic[get_highest_ID(ID_dic)+1] = [Character_box, WHITE, 1]
-ID_dic[get_highest_ID(ID_dic)+1] = "RECT"
-Rects_dic[get_highest_ID(ID_dic)+1] = [Valid_button_box, Valid_button, 0]
-ID_dic[get_highest_ID(ID_dic)+1] = "BUTTON"
-Rects_dic[get_highest_ID(ID_dic)+1] = [Ideology_button_box, Ideology_button, 0]
-ID_dic[get_highest_ID(ID_dic)+1] = "BUTTON"
-"""
