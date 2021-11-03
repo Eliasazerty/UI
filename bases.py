@@ -127,24 +127,11 @@ Rects_dic = {} # { ID : [RECT, COLOR, FILL] } || if BUTTON: { ID: [RECT, <class 
 ID_dic = {} #    { ID : TYPE_OF_RECT}  (= BUTTON, RECT, ...)
 ECARTEMENT = 10 # 10 px du bord // des autres objets // ...
 BACKGROUND_COLOR = BLACK
+ICON_COLOR = BLUE
 MARK_THICKNESS = 7
 
 screen = pygame.display.set_mode(SCREEN_SIZE)
 running = True
-
-# Choix de la disposition et de la taille des éléments sur l'écran, de la façon la plus modulable possible (= en fonction de la taille de la fenetre)
-character_rect = pygame.Rect((int(ECARTEMENT), int(ECARTEMENT)), (int(SCREEN_SIZE[0]/2.5), int(SCREEN_SIZE[1]*0.75))) # (x,y),(width, height)
-ideology_rect = pygame.Rect((character_rect.x, 2*character_rect.y+character_rect.height), (character_rect.width, SCREEN_SIZE[1]-(3*character_rect.y+character_rect.height)))
-
-ent_img = pygame.Surface((50,50))
-ent_img.fill(BLUE)
-ent_butt0 = icon(ent_img, pygame.Rect(0,0, 50, 50), screen, GRIS, BACKGROUND_COLOR, MARK_THICKNESS)
-
-ent_butt1 = icon(ent_img, pygame.Rect(60,0, 50, 50), screen, GRIS, BACKGROUND_COLOR, MARK_THICKNESS)
-
-ent_butt2 = icon(ent_img, pygame.Rect(120,0, 50, 50), screen, GRIS, BACKGROUND_COLOR, MARK_THICKNESS)
-
-real_icons = icons([ent_butt0, ent_butt1, ent_butt2])
 
 # fonctions pour pouvoir afficher les choses
 
@@ -164,11 +151,3 @@ def get_highest_ID(ID_dic):
         if id > biggest_id:
             biggest_id = id
     return biggest_id
-
-
-
-Rects_dic[get_highest_ID(ID_dic)+1] = [character_rect, WHITE, 1]
-ID_dic[get_highest_ID(ID_dic)+1] = "RECT"
-
-Rects_dic[get_highest_ID(ID_dic)+1] = [ideology_rect, WHITE, 1]
-ID_dic[get_highest_ID(ID_dic)+1] = "RECT"
