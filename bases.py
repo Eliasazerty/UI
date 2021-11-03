@@ -1,8 +1,10 @@
 import sys
 import pygame
 import refait
+from parametres import *
 
 pygame.init()
+screen = pygame.display.set_mode(SCREEN_SIZE)
 
 # les classes
 
@@ -45,7 +47,8 @@ class icon:
         self.img = img
         self.rect = rect
         self.mark_color = mark_color #(140, 140, 137) # = Gris
-        self.background_color = background_color
+        if background_color == mark_color:
+            print("WARNING: background color is the same as the mark color !")
         self.screen = screen
         self.mark_thickness = mark_thickness
 
@@ -54,18 +57,11 @@ class icon:
             return True
         return False
     
-    def detect_collision(self, position):
-        if self.is_colliding(position):
-            self.react_to_collision()
-    
-    def react_to_collision(self):
-        self.mark_rect(self.mark_color)
-
     def mark_rect(self, color):
         pygame.draw.rect(self.screen, color, self.rect, self.mark_thickness)
     
     def draw(self):
-        screen.blit(self.img, (self.rect.x, self.rect.y))
+        self.screen.blit(self.img, (self.rect.x, self.rect.y))
 
 class icons: # [+] faire la sélection au clavier
     def __init__(self, icon_list):
@@ -73,7 +69,6 @@ class icons: # [+] faire la sélection au clavier
             self.number_of_icons = len(icon_list)
             self.icon_list = icon_list
             self.activated_icon_index = 0
-            self.old_icon_index = len(icon_list)-1 # pour initialiser, on définit le dernier icône comme étant le dernier selectionné (mais inutile)
         else:
             sys.exit("icon_list vide !")
         
@@ -82,56 +77,27 @@ class icons: # [+] faire la sélection au clavier
     def draw(self):
         for icon in self.icon_list:
             icon.draw()
+        self.mark_selected_icon()
     
     def detect_collision(self, mouse_pos):
         for index_icon, icon in enumerate(self.icon_list):
             if icon.is_colliding(mouse_pos):
-                self.actualize_old_icon()
                 self.activated_icon_index = index_icon
-                self.mark_selected_icon()
     
     def mark_selected_icon(self):
         self.icon_list[self.activated_icon_index].mark_rect(self.icon_list[self.activated_icon_index].mark_color) # GRIS
-        self.icon_list[self.old_icon_index].mark_rect(self.icon_list[self.activated_icon_index].background_color) # BLACK
-    
+
     def change_to_right(self):
-        self.actualize_old_icon()
         if self.activated_icon_index < self.number_of_icons-1:
             self.activated_icon_index += 1
         else:
             self.activated_icon_index = 0 # si on ne peut pas "aller" plus à droite, on retourne au début
-        self.mark_selected_icon()
     
     def change_to_left(self):
-        self.actualize_old_icon()
         if self.activated_icon_index > 0:
             self.activated_icon_index -= 1
         else:
             self.activated_icon_index = self.number_of_icons-1 # si on ne peut pas "aller" plus à gauche, on retourne à la fin
-        self.mark_selected_icon()
-
-    def actualize_old_icon(self):
-        self.old_icon_index = self.activated_icon_index #on enregistre l'ancienne position pour pouvoir appliquer un cache dessus
-
-# les paramètres généraux ( = constantes)
-
-SCREEN_SIZE = (740, 400)  # width, height = x, y
-WHITE = (255, 255, 255)
-RED = (255, 0, 0)
-GREEN = (0, 255, 0)
-BLUE = (0, 0, 255)
-YELLOW = (255, 255, 0)
-GRIS = (140, 140, 137)
-BLACK = (0,0,0)
-Rects_dic = {} # { ID : [RECT, COLOR, FILL] } || if BUTTON: { ID: [RECT, <class 'Button'>, FILL]}
-ID_dic = {} #    { ID : TYPE_OF_RECT}  (= BUTTON, RECT, ...)
-ECARTEMENT = 10 # 10 px du bord // des autres objets // ...
-BACKGROUND_COLOR = BLACK
-ICON_COLOR = BLUE
-MARK_THICKNESS = 7
-
-screen = pygame.display.set_mode(SCREEN_SIZE)
-running = True
 
 # fonctions pour pouvoir afficher les choses
 
@@ -151,3 +117,10 @@ def get_highest_ID(ID_dic):
         if id > biggest_id:
             biggest_id = id
     return biggest_id
+
+def blit_screen(screen, background_color):
+    screen.fill(background_color)
+
+def add_a_new_rect(type_of_rect, rect_of_the_thing, color_of_the_rect, Rects_dic, ID_dic, highest_ID_of_IDdic):
+    Rects_dic[highest_ID_of_IDdic+1] = [rect_of_the_thing, color_of_the_rect, 1]
+    ID_dic[highest_ID_of_IDdic+1] = str(type_of_rect)
