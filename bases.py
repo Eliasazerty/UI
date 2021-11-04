@@ -1,12 +1,8 @@
 import sys
 import pygame
 import refait
-from parametres import *
 
 pygame.init()
-screen = pygame.display.set_mode(SCREEN_SIZE)
-
-# les classes
 
 class Button:
     def __init__(self, rect, colors, active_color, text_list, active_text):
@@ -42,7 +38,7 @@ class Button:
             self.change_color()
             self.change_text()
 
-class icon:
+class icon: # = 1 icône qui peut être mise en relation avec d'autres grâce à la classe "icons"
     def __init__(self, img, rect, screen, mark_color, background_color, mark_thickness):
         self.img = img
         self.rect = rect
@@ -63,7 +59,7 @@ class icon:
     def draw(self):
         self.screen.blit(self.img, (self.rect.x, self.rect.y))
 
-class icons: # [+] faire la sélection au clavier
+class icons: # = 1 groupe de plusieurs icônes
     def __init__(self, icon_list):
         if len(icon_list) > 0:
             self.number_of_icons = len(icon_list)
@@ -99,28 +95,79 @@ class icons: # [+] faire la sélection au clavier
         else:
             self.activated_icon_index = self.number_of_icons-1 # si on ne peut pas "aller" plus à gauche, on retourne à la fin
 
-# fonctions pour pouvoir afficher les choses
+class main: # pour pouvoir tout gérer
+    def __init__(self, screen_size, ecartement, background_color, icon_color, icon_mark_color, mark_thickness):
 
-def draw_rects(screen, ID_dic, highest_ID):
-    for i in range(highest_ID+1):
-        if ID_dic[i] == "RECT":
-            pygame.draw.rect(screen, Rects_dic[i][1], Rects_dic[i][0], Rects_dic[i][2])
-        elif ID_dic[i] == "BUTTON":
-            pygame.draw.rect(screen, Rects_dic[i][1].get_color(), Rects_dic[i][0], Rects_dic[i][2])
+        # constantes
+        self.SCREEN_SIZE = screen_size
+        self.ECARTEMENT = ecartement
+        self.BACKGROUND_COLOR = background_color
+        self.ICON_COLOR = icon_color
+        self.ICON_MARK_COLOR = icon_mark_color
+        self.MARK_THICKNESS = mark_thickness
+        self.screen = pygame.display.set_mode(self.SCREEN_SIZE)
+        self.running = True
+        self.Rects_dic = {} # { ID : [RECT, COLOR, FILL] } || if BUTTON: { ID: [RECT, <class 'Button'>, FILL]}
+        self.ID_dic = {} #    { ID : TYPE_OF_RECT}  (= BUTTON, RECT, ...)
 
-def update_screen_rects(screen):
-    pygame.display.flip() 
+        # some basic colors who could be used
+        self.WHITE = (255, 255, 255)
+        self.RED = (255, 0, 0)
+        self.GREEN = (0, 255, 0)
+        self.BLUE = (0, 0, 255)
+        self.YELLOW = (255, 255, 0)
+        self.GRIS = (140, 140, 137)
+        self.BLACK = (0,0,0)
 
-def get_highest_ID(ID_dic):
-    biggest_id = -1
-    for id in ID_dic.keys():
-        if id > biggest_id:
-            biggest_id = id
-    return biggest_id
+        self.all_icons = [] # list with all the icons the screen have [icons1, icons2] => is egal to : [[icon1,icon2,icon3,...], [icon1,icon2,icon3,...],...]
+        self.all_rects = {} # dic with all the rect with their name: {"name" : pygame.Rect()}
+    
+    def add_icon_to_list(self, icon_list, img, rect, mark_color): # [+] mark_color = self.ICON_MARK_COLOR
+        icon_list.append(icon(img, rect, self.screen, mark_color, self.BACKGROUND_COLOR, self.MARK_THICKNESS))
+    
+    def create_class_icons_from_the_icon_list(self, icon_list):
+        self.all_icons.append(icons(icon_list))
+    
+    def add_a_new_rect(self, type_of_rect, rect_of_the_thing, color_of_the_rect):
+        self.Rects_dic[self.get_highest_ID(self.ID_dic)+1] = [rect_of_the_thing, color_of_the_rect, 1]
+        self.ID_dic[self.get_highest_ID(self.ID_dic)+1] = str(type_of_rect)
+    
+    def get_highest_ID(self, dic):
+        biggest_id = -1
+        for id in dic.keys():
+            if id > biggest_id:
+                biggest_id = id
+        return biggest_id
+    
+    # fonctions pour pouvoir afficher les choses
 
-def blit_screen(screen, background_color):
-    screen.fill(background_color)
+    def draw_rects(self):
+        for i in range(self.get_highest_ID(self.ID_dic)+1):
+            if self.ID_dic[i] == "RECT":
+                pygame.draw.rect(self.screen, self.Rects_dic[i][1], self.Rects_dic[i][0], self.Rects_dic[i][2])
+            elif self.ID_dic[i] == "BUTTON":
+                pygame.draw.rect(self.screen, self.Rects_dic[i][1].get_color(), self.Rects_dic[i][0], self.Rects_dic[i][2])
 
-def add_a_new_rect(type_of_rect, rect_of_the_thing, color_of_the_rect, Rects_dic, ID_dic, highest_ID_of_IDdic):
-    Rects_dic[highest_ID_of_IDdic+1] = [rect_of_the_thing, color_of_the_rect, 1]
-    ID_dic[highest_ID_of_IDdic+1] = str(type_of_rect)
+    def update_screen_rects(self):
+        pygame.display.flip() 
+
+    def blit_screen(self):  # afficher le fond d'écran
+        self.screen.fill(self.BACKGROUND_COLOR)
+    
+    # fonctions pour faire fonctionner les icônes
+    
+    def icons_detect_collision(self, mouse_pos):
+        for icons in self.all_icons:
+            icons.detect_collision(mouse_pos)
+    
+    def icons_change_to_left(self):
+        for icons in self.all_icons:
+            icons.change_to_left()
+    
+    def icons_change_to_right(self):
+        for icons in self.all_icons:
+            icons.change_to_right()
+    
+    def icons_draw(self):
+        for icons in self.all_icons:
+            icons.draw()
