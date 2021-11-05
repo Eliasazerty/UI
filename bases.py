@@ -39,14 +39,17 @@ class Button:
             self.change_text()
 
 class icon: # = 1 icône qui peut être mise en relation avec d'autres grâce à la classe "icons"
-    def __init__(self, img, rect, screen, mark_color, background_color, mark_thickness):
+    def __init__(self, img, rect, screen, mark_color, background_color, mark_thickness, mark_wait_color):
         self.img = img
         self.rect = rect
         self.mark_color = mark_color #(140, 140, 137) # = Gris
         if background_color == mark_color:
             print("WARNING: background color is the same as the mark color !")
+        elif background_color == mark_wait_color:
+            print("WARNING: background color is the same as the mark wait color !")
         self.screen = screen
         self.mark_thickness = mark_thickness
+        self.mark_wait_color = mark_wait_color
 
     def is_colliding(self, position):
         if self.rect.collidepoint(position):
@@ -70,18 +73,26 @@ class icons: # = 1 groupe de plusieurs icônes
         
         self.mark_selected_icon() # pour avoir une icône selectionnée de base
     
-    def draw(self):
+    def draw(self, selected_icon_should_being_draw):
         for icon in self.icon_list:
             icon.draw()
-        self.mark_selected_icon()
+        if selected_icon_should_being_draw:
+            self.mark_selected_icon()
+        else:
+            self.mark_selected_wait_icon()
     
     def detect_collision(self, mouse_pos):
         for index_icon, icon in enumerate(self.icon_list):
             if icon.is_colliding(mouse_pos):
                 self.activated_icon_index = index_icon
+                return True
+        return False
     
     def mark_selected_icon(self):
         self.icon_list[self.activated_icon_index].mark_rect(self.icon_list[self.activated_icon_index].mark_color) # GRIS
+
+    def mark_selected_wait_icon(self): # pour la classe "main" ==> permet de "switcher" entre différents groupe d' icones en affichant une nouvelle couleur
+        self.icon_list[self.activated_icon_index].mark_rect(self.icon_list[self.activated_icon_index].mark_wait_color)
 
     def change_to_right(self):
         if self.activated_icon_index < self.number_of_icons-1:
@@ -121,9 +132,12 @@ class main: # pour pouvoir tout gérer
 
         self.all_icons = [] # list with all the icons the screen have [icons1, icons2] => is egal to : [[icon1,icon2,icon3,...], [icon1,icon2,icon3,...],...]
         self.all_rects = {} # dic with all the rect with their name: {"name" : pygame.Rect()}
+
+        self.index_of_actual_icons_used = 0 # pour pouvoir savoir quelles icones changer lors d'évenements du clavier
+        self.index_of_old_icons_used = 0    # il faut aussi des "vieux" de base
     
-    def add_icon_to_list(self, icon_list, img, rect, mark_color): # [+] mark_color = self.ICON_MARK_COLOR
-        icon_list.append(icon(img, rect, self.screen, mark_color, self.BACKGROUND_COLOR, self.MARK_THICKNESS))
+    def add_icon_to_list(self, icon_list, img, rect, mark_color, mark_wait_color): # [+] mark_color = self.ICON_MARK_COLOR
+        icon_list.append(icon(img, rect, self.screen, mark_color, self.BACKGROUND_COLOR, self.MARK_THICKNESS, mark_wait_color))
     
     def create_class_icons_from_the_icon_list(self, icon_list):
         self.all_icons.append(icons(icon_list))
@@ -157,17 +171,34 @@ class main: # pour pouvoir tout gérer
     # fonctions pour faire fonctionner les icônes
     
     def icons_detect_collision(self, mouse_pos):
-        for icons in self.all_icons:
-            icons.detect_collision(mouse_pos)
+        for index, icons in enumerate(self.all_icons): # truc avec enumerate() pour pouvoir changer self.index_of_actual_icon_used
+            if icons.detect_collision(mouse_pos):
+                self.actualize_old_index_icons_used()
+                self.index_of_actual_icons_used = index
+                return
     
     def icons_change_to_left(self):
-        for icons in self.all_icons:
-            icons.change_to_left()
+        self.all_icons[self.index_of_actual_icons_used].change_to_left()
     
     def icons_change_to_right(self):
-        for icons in self.all_icons:
-            icons.change_to_right()
+        self.all_icons[self.index_of_actual_icons_used].change_to_right()
     
+    def icons_change_bottom(self):
+        if self.index_of_actual_icons_used < len(self.all_icons)-1:
+            self.actualize_old_index_icons_used()
+            self.index_of_actual_icons_used += 1
+    
+    def icons_change_top(self):
+        if self.index_of_actual_icons_used > 0:
+            self.actualize_old_index_icons_used()
+            self.index_of_actual_icons_used -= 1
+
+    def actualize_old_index_icons_used(self):
+        self.index_of_old_icons_used = self.index_of_actual_icons_used
+
     def icons_draw(self):
-        for icons in self.all_icons:
-            icons.draw()
+        for index, icons in enumerate(self.all_icons): # selected_icon_should_being_draw
+            if index == self.index_of_actual_icons_used:
+                icons.draw(selected_icon_should_being_draw=True)
+            else:
+                icons.draw(selected_icon_should_being_draw=False)
