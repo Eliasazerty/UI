@@ -10,7 +10,7 @@ NOTE: pygame.Rect(x,y, width, height)
 
 
 # --petits parametres pour être plus lisible--
-ecartement = 10 # 10 px du bord // des autres objets // ...
+ecartement = 10 # 10 px du bord // des autres objets // ...    ====> uniquement pour la "mise en page" (=pas obligatoire d'utiliser ce parmatres, mais peut etre utile)
 bg_color = (140, 140, 137) # GRIS
 icon_color = (0, 0, 255) #BLUE
 mark_thickness = 7
@@ -23,24 +23,29 @@ pygame.init()
 
 # création de la fenetre avec les paramètres définis au-dessus
 window = main(screen_size, ecartement, bg_color, icon_color, icon_mark_color, mark_thickness)
-
+# --------------------------------------------------------
+assassin = image("img/assassin.jpg") # création d'une image
+assassin.load_with_color_filter((255, 255, 255)) # on ajoute un filtre de couleur pour avoir de la transparence
+assassin.infos()
+assassin.resize((50,50)) # on redimensionne l'image
+assassin.infos()
 #------------------------------------------------------------------------------------------------------------
 
                                         # Les icones (= les sélecteurs)
 
 # création des images qui vont être utilisée :
 img_gentil = pygame.Surface((50,50))
-img_gentil.fill(window.ICON_COLOR) # création de l'image des icones et remplissage
+img_gentil.fill(window.ICON_COLOR) # création de l'image des icones et remplissage de celle-ci
 
 mechant_img = pygame.Surface((50,50))
-mechant_img.fill(window.YELLOW) # création de l'image des icones et remplissage
+mechant_img.fill(window.YELLOW) # création de l'image des icones et remplissage de celle-ci
 
 # 2 listes qui vont contenir chacunes des icones
 icones_gentil = []
 icones_mechant = []
 
     # on crée et on ajoute (avec la fonction "add_icon_to_list") 3 icones à la liste "icones_gentil" 
-window.add_icon_to_list(icones_gentil, img_gentil, pygame.Rect(0, 0, 50, 50), window.BLACK, icon_mark_wait_color) 
+window.add_icon_to_list(icones_gentil, assassin.img, pygame.Rect(0, 0, 50, 50), window.BLACK, icon_mark_wait_color) 
 window.add_icon_to_list(icones_gentil, img_gentil, pygame.Rect(60, 0, 50, 50), window.BLACK, icon_mark_wait_color)
 window.add_icon_to_list(icones_gentil, img_gentil, pygame.Rect(120, 0, 50, 50), window.BLACK, icon_mark_wait_color)
     # on crée et on ajoute (avec la fonction "add_icon_to_list") 3 icones à la liste "icones_mechant" 
@@ -71,7 +76,7 @@ while window.running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             window.running = False
-        elif event.type == pygame.MOUSEBUTTONDOWN: #   /!\ pygame.KEYDOWN
+        elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 window.icons_detect_collision(pygame.mouse.get_pos())
         elif event.type == pygame.KEYDOWN:
@@ -83,8 +88,9 @@ while window.running:
                 window.icons_change_top()
             elif event.key == pygame.K_DOWN:
                 window.icons_change_bottom()
-                print("DOWN !!")
-    
+            elif event.key == pygame.K_RETURN:
+                print(window.index_of_actual_icons_used, window.all_icons[window.index_of_actual_icons_used].activated_icon_index)
+# pour l'icone selectionnée:     affiche(le numéro du groupe, le numéro de l'icone dans ce groupe)
     window.blit_screen()
     window.draw_rects()
     window.icons_draw()

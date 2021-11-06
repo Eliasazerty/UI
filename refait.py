@@ -9,14 +9,14 @@ Entities = { # name, damage, hp, defense, speed, precision
     "Rogue"  : ['', 40, 800, 5, 37, 37],
     "Orc"    : ['Orc', 70, 5, 1250, 2, 2],      #méchant
     "Water_elemental" : ['Water_elemental', 50, 10, 1000, 15, 10],
-    "Ghost" : ['Ghost', 40, 0, 600, 40, 25],
-    "Cursed_Knight" : ['Cursed_Knight', 40, 20, 2000, 10, 25],
-    "Deviant_Alexa" : ['Deviant_Alexa', 55, 10, 900, 15, 35],
+    "Ghost" :           ['Ghost', 40, 0, 600, 40, 25],
+    "Cursed_Knight" :   ['Cursed_Knight', 40, 20, 2000, 10, 25],
+    "Deviant_Alexa" :   ['Deviant_Alexa', 55, 10, 900, 15, 35],
     "Goblin_Team" : ['Goblin_Team', 45, 5, 1000, 7, 7],     #compliqué
-    "Mad_King" : ['Mad_King', 30, 35, 2300, 5, 10],
+    "Mad_King" :    ['Mad_King', 30, 35, 2300, 5, 10],
     "Prankster_Gh": ['Prankster_Gh', 40, 0, 400, 80, 50],
-    "Chad"  : ['Chad', 60, 20, 1200, 0, 0],
-    "SCM"   : ['S.C.M.', 45, 10, 1600, 10, 10]
+    "Chad"  :       ['Chad', 60, 20, 1200, 0, 0],
+    "SCM"   :       ['S.C.M.', 45, 10, 1600, 10, 10]
 }
 
 class Entity:

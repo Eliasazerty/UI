@@ -4,6 +4,30 @@ import refait
 
 pygame.init()
 
+class image: # = permet de charger/redimensionner et ajouter de la transparence à une image
+    def __init__(self, path):
+        self.path = path
+        self.img = None
+        
+    def load(self):
+        self.img = pygame.image.load(self.path).convert()
+    
+    def load_with_transparence(self):
+        self.img = pygame.image.load(self.path).convert_alpha()
+
+    def load_with_color_filter(self, color):
+        self.img = pygame.image.load(self.path)
+        self.img.set_colorkey(color)
+        self.img.convert_alpha()
+    
+    def resize(self, size):
+        self.img = pygame.transform.scale(self.img, size)
+    
+    def infos(self):
+        print("Img:")
+        print(f"\tWIDTH = {self.img.get_width()}")
+        print(f"\tHEIGHT = {self.img.get_height()}")
+
 class Button:
     def __init__(self, rect, colors, active_color, text_list, active_text):
         self.rect = rect
