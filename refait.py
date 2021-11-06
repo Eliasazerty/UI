@@ -23,7 +23,7 @@ with open('Entities.json') as json_file:
 #}
 
 class Entity:
-    def __init__(self, characteristics, ideology, entity_type): # characteristics = [name, damage, hp, defense, speed, precision]
+    def __init__(self, characteristics, ideology, entity_type, image = False): # characteristics = [name, damage, hp, defense, speed, precision]
         self.name = characteristics[0]
         self.damage = characteristics[1]
         self.defense = characteristics[2]
@@ -32,21 +32,25 @@ class Entity:
         self.precision = characteristics[5]
 
         self.entity_type = entity_type
+        if image != False: # = si cet argument existe 
+            self.image = image
+        else:
+            self.image = None
 
         if ideology == "gentil":
-            self.ideology = "a great person"
+            self.ideology = "a great"
         else:
-            self.ideology = "an evil person"
+            self.ideology = "an evil"
 
     def presentation(self):
-        print(f"Caracteristics of {self.ideology}, a {self.entity_type} called {self.name}:")
+        print(f"Caracteristics of {self.name}, {self.ideology} {self.entity_type}:")
         print(f"\t\tATK [{self.damage}] \n \t\tHP [{self.hp}] \n \t\tdefense [{self.defense}] \n \t\tspeed [{self.speed}] \n \t\tprecision [{self.precision}]")
 
-def create_someone(Entities_dic, ideology, type_of_entity, entity_name):
+def create_someone(Entities_dic, ideology, type_of_entity, entity_name, image):
     try:
         entite = Entities_dic[type_of_entity]
         entite[0] = entity_name
-        Someone = Entity(entite, ideology, type_of_entity)
+        Someone = Entity(entite, ideology, type_of_entity, image)
     except:
         print(f"ERROR: No entity of type {type_of_entity} found !")
         sys.exit()

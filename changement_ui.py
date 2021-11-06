@@ -14,7 +14,7 @@ ecartement = 10 # 10 px du bord // des autres objets // ...    ====> uniquement 
 bg_color = (140, 140, 137) # GRIS
 icon_color = (0, 0, 255) #BLUE
 mark_thickness = 7
-screen_size = (740, 400)
+screen_size = (940, 400)
 icon_mark_color = (0,0,0) # BLACK
 icon_mark_wait_color = (76, 84, 81) # RED
 # ---------------------------------------------
@@ -23,17 +23,15 @@ pygame.init()
 
 # création de la fenetre avec les paramètres définis au-dessus
 window = main(screen_size, ecartement, bg_color, icon_color, icon_mark_color, mark_thickness)
-# --------------------------------------------------------
-assassin = image("img/assassin.jpg") # création d'une image
-assassin.load_with_color_filter((255, 255, 255)) # on ajoute un filtre de couleur pour avoir de la transparence
-assassin.infos()
-assassin.resize((50,50)) # on redimensionne l'image
-assassin.infos()
-#----------------------------------------------------------
-assassin_entity = refait.create_someone(refait.Entities, "gentil", "Knight", "Elias")
+
+#----------------------------------------------------------     
+#                               classe entité contient une classe image
+knight = refait.create_someone(refait.Entities, "gentil", "Knight", "Lancelot du lac", image("img/assassin.jpg"))
+knight.image.load_with_color_filter((255, 255, 255))
+knight.image.resize((50,50))
 #------------------------------------------------------------------------------------------------------------
 
-                                        # Les icones (= les sélecteurs)
+#                                        Les icones (= les sélecteurs)
 
 # création des images qui vont être utilisée :
 img_gentil = pygame.Surface((50,50))
@@ -47,7 +45,7 @@ icones_gentil = []
 icones_mechant = []
 
     # on crée et on ajoute (avec la fonction "add_icon_to_list") 3 icones à la liste "icones_gentil" 
-window.add_icon_to_list(icones_gentil, assassin.img, pygame.Rect(0, 0, 50, 50), window.BLACK, icon_mark_wait_color, assassin_entity) 
+window.add_icon_to_list(icones_gentil, knight.image.picture, pygame.Rect(0, 0, 50, 50), window.BLACK, icon_mark_wait_color, knight) 
 window.add_icon_to_list(icones_gentil, img_gentil, pygame.Rect(60, 0, 50, 50), window.BLACK, icon_mark_wait_color)
 window.add_icon_to_list(icones_gentil, img_gentil, pygame.Rect(120, 0, 50, 50), window.BLACK, icon_mark_wait_color)
     # on crée et on ajoute (avec la fonction "add_icon_to_list") 3 icones à la liste "icones_mechant" 
@@ -92,7 +90,7 @@ while window.running:
                 window.icons_change_bottom()
             elif event.key == pygame.K_RETURN:
                 window.get_icon_info()
-                
+
     window.blit_screen()
     window.draw_rects()
     window.icons_draw()
