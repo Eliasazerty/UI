@@ -36,20 +36,15 @@ class Entity:
     def presentation(self):
         print(f"Caracteristics of {self.ideology}:")
         print("\tname:", self.name)
-        print(f"\t\tATK [{self.damage}] || HP [{self.hp}]")
-        print(f"\t\tdefense [{self.defense}] || speed [{self.speed}] || precision [{self.precision}]")
+        print(f"\t\tATK [{self.damage}] \n \t\tHP [{self.hp}] \n \t\tdefense [{self.defense}] \n \t\tspeed [{self.speed}] \n \t\tprecision [{self.precision}]")
 
-def create_someone(Entities_dic, ideology):
-    if ideology == "gentil":
-        msg = "of a great person"
-    else:
-        msg = "of an evil entity"
-    name = input(f"Name {msg}: ")
+def create_someone(Entities_dic, ideology, type_of_entity, entity_name):
     try:
-        entite = Entities_dic[input("Entity name: ")]
-        entite[0] = name
+        entite = Entities_dic[type_of_entity]
+        entite[0] = entity_name
         Someone = Entity(entite, ideology)
     except:
+        print(f"ERROR: No entity of type {type_of_entity} found !")
         sys.exit()
     return Someone
     

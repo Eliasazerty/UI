@@ -29,6 +29,8 @@ assassin.load_with_color_filter((255, 255, 255)) # on ajoute un filtre de couleu
 assassin.infos()
 assassin.resize((50,50)) # on redimensionne l'image
 assassin.infos()
+#----------------------------------------------------------
+assassin_entity = refait.create_someone(refait.Entities, "gentil", "Knight", "Elias")
 #------------------------------------------------------------------------------------------------------------
 
                                         # Les icones (= les sélecteurs)
@@ -45,7 +47,7 @@ icones_gentil = []
 icones_mechant = []
 
     # on crée et on ajoute (avec la fonction "add_icon_to_list") 3 icones à la liste "icones_gentil" 
-window.add_icon_to_list(icones_gentil, assassin.img, pygame.Rect(0, 0, 50, 50), window.BLACK, icon_mark_wait_color) 
+window.add_icon_to_list(icones_gentil, assassin.img, pygame.Rect(0, 0, 50, 50), window.BLACK, icon_mark_wait_color, assassin_entity) 
 window.add_icon_to_list(icones_gentil, img_gentil, pygame.Rect(60, 0, 50, 50), window.BLACK, icon_mark_wait_color)
 window.add_icon_to_list(icones_gentil, img_gentil, pygame.Rect(120, 0, 50, 50), window.BLACK, icon_mark_wait_color)
     # on crée et on ajoute (avec la fonction "add_icon_to_list") 3 icones à la liste "icones_mechant" 
@@ -89,8 +91,8 @@ while window.running:
             elif event.key == pygame.K_DOWN:
                 window.icons_change_bottom()
             elif event.key == pygame.K_RETURN:
-                print(window.index_of_actual_icons_used, window.all_icons[window.index_of_actual_icons_used].activated_icon_index)
-# pour l'icone selectionnée:     affiche(le numéro du groupe, le numéro de l'icone dans ce groupe)
+                window.get_icon_info()
+                
     window.blit_screen()
     window.draw_rects()
     window.icons_draw()

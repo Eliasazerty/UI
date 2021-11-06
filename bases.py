@@ -63,7 +63,7 @@ class Button:
             self.change_text()
 
 class icon: # = 1 icône qui peut être mise en relation avec d'autres grâce à la classe "icons"
-    def __init__(self, img, rect, screen, mark_color, background_color, mark_thickness, mark_wait_color):
+    def __init__(self, img, rect, screen, mark_color, background_color, mark_thickness, mark_wait_color, Entity):
         self.img = img
         self.rect = rect
         self.mark_color = mark_color #(140, 140, 137) # = Gris
@@ -74,6 +74,11 @@ class icon: # = 1 icône qui peut être mise en relation avec d'autres grâce à
         self.screen = screen
         self.mark_thickness = mark_thickness
         self.mark_wait_color = mark_wait_color
+
+        if Entity != False: # = they're an Entity linked to this icon
+            self.entity = Entity
+        else:
+            self.entity = None
 
     def is_colliding(self, position):
         if self.rect.collidepoint(position):
@@ -160,9 +165,10 @@ class main: # pour pouvoir tout gérer
         self.index_of_actual_icons_used = 0 # pour pouvoir savoir quelles icones changer lors d'évenements du clavier
         self.index_of_old_icons_used = 0    # il faut aussi des "vieux" de base
     
-    def add_icon_to_list(self, icon_list, img, rect, mark_color, mark_wait_color): # [+] mark_color = self.ICON_MARK_COLOR
-        icon_list.append(icon(img, rect, self.screen, mark_color, self.BACKGROUND_COLOR, self.MARK_THICKNESS, mark_wait_color))
-    
+ #                                                   [+] default: mark_color = self.ICON_MARK_COLOR
+    def add_icon_to_list(self, icon_list, img, rect, mark_color, mark_wait_color, Entity = False): 
+        icon_list.append(icon(img, rect, self.screen, mark_color, self.BACKGROUND_COLOR, self.MARK_THICKNESS, mark_wait_color, Entity))
+
     def create_class_icons_from_the_icon_list(self, icon_list):
         self.all_icons.append(icons(icon_list))
     
@@ -177,7 +183,7 @@ class main: # pour pouvoir tout gérer
                 biggest_id = id
         return biggest_id
     
-    # fonctions pour pouvoir afficher les choses
+    # fonctions pour pouvoir afficher les choses à l'écran
 
     def draw_rects(self):
         for i in range(self.get_highest_ID(self.ID_dic)+1):
@@ -191,7 +197,19 @@ class main: # pour pouvoir tout gérer
 
     def blit_screen(self):  # afficher le fond d'écran
         self.screen.fill(self.BACKGROUND_COLOR)
-    
+
+    # fonction pour afficher les infos de l'icone en sélection
+
+    def get_icon_info(self):
+        print("ICON:")
+        current_icons = self.all_icons[self.index_of_actual_icons_used]
+        activated_icon_index = current_icons.activated_icon_index
+        if current_icons.icon_list[activated_icon_index].entity != None:
+            current_icons.icon_list[activated_icon_index].entity.presentation()
+        print(f"\tWIDTH: {current_icons.icon_list[activated_icon_index].rect.width}")
+        print(f"\tHEIGHT: {current_icons.icon_list[activated_icon_index].rect.height}")
+
+
     # fonctions pour faire fonctionner les icônes
     
     def icons_detect_collision(self, mouse_pos):
