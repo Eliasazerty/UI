@@ -1,5 +1,6 @@
 import sys
 import pygame
+from json import load as json_load
 import refait
 from bases import *
 
@@ -7,10 +8,13 @@ from bases import *
 NOTE: pygame.Rect(x,y, width, height)
         => x,y sont les coordonées en haut à gauche du rectangle
 """
-
+# ----- charger le fichier json contenant les infos concernant les entités ------------------
+with open('Entities.json') as json_file:
+    Entities = json_load(json_file)
+# --------------------------------------------------
 
 # --petits parametres pour être plus lisible--
-ecartement = 10 # 10 px du bord // des autres objets // ...    ====> uniquement pour la "mise en page" (=pas obligatoire d'utiliser ce parmatres, mais peut etre utile)
+ecartement = 10 # = 10 px du bord // des autres objets // ...    ====> uniquement pour la "mise en page" (=pas obligatoire d'utiliser ce parmatres, mais peut etre utile)
 bg_color = (140, 140, 137) # GRIS
 icon_color = (0, 0, 255) #BLUE
 mark_thickness = 7
@@ -25,8 +29,8 @@ pygame.init()
 window = main(screen_size, ecartement, bg_color, icon_color, icon_mark_color, mark_thickness)
 
 #----------------------------------------------------------     
-#                               classe entité contient une classe image
-knight = refait.create_someone(refait.Entities, "gentil", "Knight", "Lancelot du lac", image("img/assassin.jpg"))
+#                               NOTE: classe entité contient une classe image
+knight = refait.create_someone(Entities, "gentil", "Knight", "Lancelot du lac", image("img/assassin.jpg"))
 knight.image.load_with_color_filter((255, 255, 255))
 knight.image.resize((50,50))
 #------------------------------------------------------------------------------------------------------------
@@ -61,16 +65,19 @@ window.create_class_icons_from_the_icon_list(icones_mechant)
 # /!\   L'ORDRE a de l'IMPORTANCE : premier ajoutés = "au-dessus" des autres (voir plus bas les fonctions "window.icons_change_top/bottom()")
 # /!\
 
-#------------------------------------------------------------------------------------------------------------
+#-------------------------------Création de carrés/buttons---------------------------------------
 
 
 # Choix de la disposition et de la taille des éléments sur l'écran, de la façon la plus modulable possible (= en fonction de la taille de la fenetre)
 character_rect = pygame.Rect((int(window.ECARTEMENT), int(window.ECARTEMENT)), (int(window.SCREEN_SIZE[0]/2.5), int(window.SCREEN_SIZE[1]*0.75))) # (x,y),(width, height)
 ideology_rect = pygame.Rect((character_rect.x, 2*character_rect.y+character_rect.height), (character_rect.width, window.SCREEN_SIZE[1]-(3*character_rect.y+character_rect.height)))
+validation_rect = pygame.Rect((800, 200), (70, 20))
 
-# Ajout des "Rect" dans la classe "main" pour pouvoir les afficher/ les utiliser
-window.add_a_new_rect("RECT", character_rect, window.WHITE)
-window.add_a_new_rect("RECT", ideology_rect, window.WHITE)
+# Ajout des "Rect" (=des carrés) dans la classe "main" (la 'window') pour pouvoir les afficher/ les utiliser
+window.add_a_new_rect(character_rect, window.WHITE)
+window.add_a_new_rect(ideology_rect, window.WHITE)
+
+window.add_a_new_button(Button(validation_rect, [window.BLUE, window.RED], window.BLUE, ['a', 'b'], 'a'))
 
 while window.running:
     for event in pygame.event.get():
@@ -79,6 +86,7 @@ while window.running:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 window.icons_detect_collision(pygame.mouse.get_pos())
+                window.buttons_detect_collision(pygame.mouse.get_pos())
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_LEFT:
                 window.icons_change_to_left()
@@ -93,5 +101,6 @@ while window.running:
 
     window.blit_screen()
     window.draw_rects()
+    window.draw_buttons()
     window.icons_draw()
     window.update_screen_rects()

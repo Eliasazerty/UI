@@ -61,6 +61,7 @@ class Button:
         if self.is_colliding(position):
             self.change_color()
             self.change_text()
+            return True
 
 class icon: # = 1 icône qui peut être mise en relation avec d'autres grâce à la classe "icons"
     def __init__(self, img, rect, screen, mark_color, background_color, mark_thickness, mark_wait_color, Entity):
@@ -147,8 +148,8 @@ class main: # pour pouvoir tout gérer
         self.MARK_THICKNESS = mark_thickness
         self.screen = pygame.display.set_mode(self.SCREEN_SIZE)
         self.running = True
-        self.Rects_dic = {} # { ID : [RECT, COLOR, FILL] } || if BUTTON: { ID: [RECT, <class 'Button'>, FILL]}
-        self.ID_dic = {} #    { ID : TYPE_OF_RECT}  (= BUTTON, RECT, ...)
+        self.rects_list = []  # [RECT, COLOR, FILL]
+        self.button_list = [] # [<class 'Button'>, FILL]
 
         # some basic colors who could be used
         self.WHITE = (255, 255, 255)
@@ -163,7 +164,6 @@ class main: # pour pouvoir tout gérer
         self.all_rects = {} # dic with all the rect with their name: {"name" : pygame.Rect()}
 
         self.index_of_actual_icons_used = 0 # pour pouvoir savoir quelles icones changer lors d'évenements du clavier
-        self.index_of_old_icons_used = 0    # il faut aussi des "vieux" de base
     
  #                                                   [+] default: mark_color = self.ICON_MARK_COLOR
     def add_icon_to_list(self, icon_list, img, rect, mark_color, mark_wait_color, Entity = False): 
@@ -172,31 +172,33 @@ class main: # pour pouvoir tout gérer
     def create_class_icons_from_the_icon_list(self, icon_list):
         self.all_icons.append(icons(icon_list))
     
-    def add_a_new_rect(self, type_of_rect, rect_of_the_thing, color_of_the_rect):
-        self.Rects_dic[self.get_highest_ID(self.ID_dic)+1] = [rect_of_the_thing, color_of_the_rect, 1]
-        self.ID_dic[self.get_highest_ID(self.ID_dic)+1] = str(type_of_rect)
+    def add_a_new_rect(self, rect_of_the_thing, color_of_the_rect, fill=1): # fill -> 1 = just the borders / 0 = totaly filled
+        self.rects_list.append([rect_of_the_thing, color_of_the_rect, fill])
     
-    def get_highest_ID(self, dic):
-        biggest_id = -1
-        for id in dic.keys():
-            if id > biggest_id:
-                biggest_id = id
-        return biggest_id
-    
+    def add_a_new_button(self, Button_class, fill = 0): # fill -> 1 = just the borders / 0 = totaly filled
+        self.button_list.append([Button_class, fill])
+        
     # fonctions pour pouvoir afficher les choses à l'écran
 
     def draw_rects(self):
-        for i in range(self.get_highest_ID(self.ID_dic)+1):
-            if self.ID_dic[i] == "RECT":
-                pygame.draw.rect(self.screen, self.Rects_dic[i][1], self.Rects_dic[i][0], self.Rects_dic[i][2])
-            elif self.ID_dic[i] == "BUTTON":
-                pygame.draw.rect(self.screen, self.Rects_dic[i][1].get_color(), self.Rects_dic[i][0], self.Rects_dic[i][2])
+        for rect in self.rects_list: # on parcourt tout les éléments de la liste et on les affiche
+            pygame.draw.rect(self.screen, rect[1], rect[0], rect[2])
 
+    def draw_buttons(self): # on parcourt tout les éléments de la liste et on les affiche
+        for button in self.button_list:
+            pygame.draw.rect(self.screen, button[0].get_color(), button[0].rect, button[1])
+                
     def update_screen_rects(self):
         pygame.display.flip() 
 
     def blit_screen(self):  # afficher le fond d'écran
         self.screen.fill(self.BACKGROUND_COLOR)
+    
+    # fonction pour pouvoir détecter la sélection d'un bouton:
+    def buttons_detect_collision(self, mouse_pos):
+        for button in self.button_list:
+            if button[0].detect_collision(mouse_pos): # si un bouton est "touché"
+                return                             # on quitte la fonction (la souris est à un seul endroit à la fois) = optimisation
 
     # fonction pour afficher les infos de l'icone en sélection
 
@@ -215,7 +217,6 @@ class main: # pour pouvoir tout gérer
     def icons_detect_collision(self, mouse_pos):
         for index, icons in enumerate(self.all_icons): # truc avec enumerate() pour pouvoir changer self.index_of_actual_icon_used
             if icons.detect_collision(mouse_pos):
-                self.actualize_old_index_icons_used()
                 self.index_of_actual_icons_used = index
                 return
     
@@ -227,16 +228,12 @@ class main: # pour pouvoir tout gérer
     
     def icons_change_bottom(self):
         if self.index_of_actual_icons_used < len(self.all_icons)-1:
-            self.actualize_old_index_icons_used()
             self.index_of_actual_icons_used += 1
     
     def icons_change_top(self):
         if self.index_of_actual_icons_used > 0:
-            self.actualize_old_index_icons_used()
             self.index_of_actual_icons_used -= 1
 
-    def actualize_old_index_icons_used(self):
-        self.index_of_old_icons_used = self.index_of_actual_icons_used
 
     def icons_draw(self):
         for index, icons in enumerate(self.all_icons): # selected_icon_should_being_draw
