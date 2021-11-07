@@ -12,15 +12,22 @@ NOTE: pygame.Rect(x,y, width, height)
 with open('Entities.json') as json_file:
     Entities = json_load(json_file)
 # --------------------------------------------------
-
+# some basic colors who could be used
+WHITE = (255, 255, 255)
+RED = (255, 0, 0)
+GREEN = (0, 255, 0)
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+GREY = (140, 140, 137)
+BLACK = (0,0,0)
 # --petits parametres pour être plus lisible--
 ecartement = 10 # = 10 px du bord // des autres objets // ...    ====> uniquement pour la "mise en page" (=pas obligatoire d'utiliser ce parmatres, mais peut etre utile)
-bg_color = (140, 140, 137) # GRIS
-icon_color = (0, 0, 255) #BLUE
+bg_color = GREY # GRIS
+icon_color = BLUE
 mark_thickness = 7
 screen_size = (940, 400)
-icon_mark_color = (0,0,0) # BLACK
-icon_mark_wait_color = (76, 84, 81) # RED
+icon_mark_color = BLACK
+icon_mark_wait_color = (76, 84, 81) # kinda RED
 # ---------------------------------------------
 
 pygame.init()
@@ -31,7 +38,7 @@ window = main(screen_size, ecartement, bg_color, icon_color, icon_mark_color, ma
 #----------------------------------------------------------     
 #                               NOTE: classe entité contient une classe image
 knight = refait.create_someone(Entities, "gentil", "Knight", "Lancelot du lac", image("img/assassin.jpg"))
-knight.image.load_with_color_filter((255, 255, 255))
+knight.image.load_with_color_filter(WHITE)
 knight.image.resize((50,50))
 #------------------------------------------------------------------------------------------------------------
 
@@ -42,20 +49,20 @@ img_gentil = pygame.Surface((50,50))
 img_gentil.fill(window.ICON_COLOR) # création de l'image des icones et remplissage de celle-ci
 
 mechant_img = pygame.Surface((50,50))
-mechant_img.fill(window.YELLOW) # création de l'image des icones et remplissage de celle-ci
+mechant_img.fill(YELLOW) # création de l'image des icones et remplissage de celle-ci
 
 # 2 listes qui vont contenir chacunes des icones
 icones_gentil = []
 icones_mechant = []
 
     # on crée et on ajoute (avec la fonction "add_icon_to_list") 3 icones à la liste "icones_gentil" 
-window.add_icon_to_list(icones_gentil, knight.image.picture, pygame.Rect(0, 0, 50, 50), window.BLACK, icon_mark_wait_color, knight) 
-window.add_icon_to_list(icones_gentil, img_gentil, pygame.Rect(60, 0, 50, 50), window.BLACK, icon_mark_wait_color)
-window.add_icon_to_list(icones_gentil, img_gentil, pygame.Rect(120, 0, 50, 50), window.BLACK, icon_mark_wait_color)
+window.add_icon_to_list(icones_gentil, knight.image.picture, pygame.Rect(0, 0, 50, 50), BLACK, icon_mark_wait_color, knight) 
+window.add_icon_to_list(icones_gentil, img_gentil, pygame.Rect(60, 0, 50, 50), BLACK, icon_mark_wait_color)
+window.add_icon_to_list(icones_gentil, img_gentil, pygame.Rect(120, 0, 50, 50), BLACK, icon_mark_wait_color)
     # on crée et on ajoute (avec la fonction "add_icon_to_list") 3 icones à la liste "icones_mechant" 
-window.add_icon_to_list(icones_mechant, mechant_img, pygame.Rect(0, 60, 50, 50), window.BLACK, icon_mark_wait_color)
-window.add_icon_to_list(icones_mechant, mechant_img, pygame.Rect(60, 60, 50, 50), window.BLACK, icon_mark_wait_color)
-window.add_icon_to_list(icones_mechant, mechant_img, pygame.Rect(120, 60, 50, 50), window.BLACK, icon_mark_wait_color)
+window.add_icon_to_list(icones_mechant, mechant_img, pygame.Rect(0, 60, 50, 50), BLACK, icon_mark_wait_color)
+window.add_icon_to_list(icones_mechant, mechant_img, pygame.Rect(60, 60, 50, 50), BLACK, icon_mark_wait_color)
+window.add_icon_to_list(icones_mechant, mechant_img, pygame.Rect(120, 60, 50, 50), BLACK, icon_mark_wait_color)
 
     # on regroupe les icônes contenues dans la liste "icones_gentil" ensemble
 window.create_class_icons_from_the_icon_list(icones_gentil)
@@ -74,10 +81,10 @@ ideology_rect = pygame.Rect((character_rect.x, 2*character_rect.y+character_rect
 validation_rect = pygame.Rect((800, 200), (70, 20))
 
 # Ajout des "Rect" (=des carrés) dans la classe "main" (la 'window') pour pouvoir les afficher/ les utiliser
-window.add_a_new_rect(character_rect, window.WHITE)
-window.add_a_new_rect(ideology_rect, window.WHITE)
+window.add_a_new_rect(character_rect, WHITE)
+window.add_a_new_rect(ideology_rect, WHITE)
 
-window.add_a_new_button(Button(validation_rect, [window.BLUE, window.RED], window.BLUE, ['a', 'b'], 'a'))
+window.add_a_new_button(Button(validation_rect, [BLUE, RED, YELLOW], BLUE, ['first text', 'second text'], 'first text'))
 
 while window.running:
     for event in pygame.event.get():

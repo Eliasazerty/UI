@@ -146,19 +146,11 @@ class main: # pour pouvoir tout gérer
         self.ICON_COLOR = icon_color
         self.ICON_MARK_COLOR = icon_mark_color
         self.MARK_THICKNESS = mark_thickness
+        # variables utiles dans tout le programme
         self.screen = pygame.display.set_mode(self.SCREEN_SIZE)
         self.running = True
         self.rects_list = []  # [RECT, COLOR, FILL]
         self.button_list = [] # [<class 'Button'>, FILL]
-
-        # some basic colors who could be used
-        self.WHITE = (255, 255, 255)
-        self.RED = (255, 0, 0)
-        self.GREEN = (0, 255, 0)
-        self.BLUE = (0, 0, 255)
-        self.YELLOW = (255, 255, 0)
-        self.GRIS = (140, 140, 137)
-        self.BLACK = (0,0,0)
 
         self.all_icons = [] # list with all the icons the screen have [icons1, icons2] => is egal to : [[icon1,icon2,icon3,...], [icon1,icon2,icon3,...],...]
         self.all_rects = {} # dic with all the rect with their name: {"name" : pygame.Rect()}
@@ -207,6 +199,7 @@ class main: # pour pouvoir tout gérer
         current_icons = self.all_icons[self.index_of_actual_icons_used]
         activated_icon_index = current_icons.activated_icon_index
         if current_icons.icon_list[activated_icon_index].entity != None:
+            print("\t", end="")
             current_icons.icon_list[activated_icon_index].entity.presentation()
         print(f"\tWIDTH: {current_icons.icon_list[activated_icon_index].rect.width}")
         print(f"\tHEIGHT: {current_icons.icon_list[activated_icon_index].rect.height}")
