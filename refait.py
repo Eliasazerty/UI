@@ -19,8 +19,12 @@ class Entity:
 
         if ideology == "gentil":
             self.ideology = "a great"
-        else:
+        elif ideology == "mechant":
             self.ideology = "an evil"
+        elif ideology == "hardcore":
+            self.ideology = "a demon"
+        else:
+            self.ideology = "a person"
 
     def presentation(self):
         print(f"Caracteristics of {self.name}, {self.ideology} {self.entity_type}:")
@@ -33,6 +37,8 @@ def create_someone(Entities_dic, ideology, type_of_entity, entity_name, image):
         Someone = Entity(entite, ideology, type_of_entity, image)
     except:
         print(f"ERROR: No entity of type {type_of_entity} found !")
+        print(f"{Entities_dic[type_of_entity]}")
+        print(f"{Entity(entite, ideology, type_of_entity, image)}")
         sys.exit()
     return Someone
 

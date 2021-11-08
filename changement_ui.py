@@ -1,13 +1,9 @@
 import sys
 import pygame
-from json import load as json_load
 import refait
 from bases import *
+from json import load as json_load
 
-"""
-NOTE: pygame.Rect(x,y, width, height)
-        => x,y sont les coordonées en haut à gauche du rectangle
-"""
 # ----- charger le fichier json contenant les infos concernant les entités ------------------
 with open('Entities.json') as json_file:
     Entities = json_load(json_file)
@@ -34,40 +30,79 @@ pygame.init()
 
 # création de la fenetre avec les paramètres définis au-dessus
 window = main(screen_size, ecartement, bg_color, icon_color, icon_mark_color, mark_thickness)
-
-#----------------------------------------------------------     
-#                               NOTE: classe entité contient une classe image
-knight = refait.create_someone(Entities, "gentil", "Knight", "Lancelot du lac", image("img/assassin.jpg"))
+#------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------
+    # Création des images
+knight = refait.create_someone(Entities, "gentil", "Knight", "arthur", image("img/knight.png"))
 knight.image.load_with_color_filter(WHITE)
 knight.image.resize((50,50))
+#----------------------------------------------------------     
+
+mage = refait.create_someone(Entities, "gentil", "Mage", "Merlin l'enchanteur", image("img/mage.png"))
+mage.image.load_with_color_filter(WHITE)
+mage.image.resize((50,50))
+#----------------------------------------------------------     
+
+rogue = refait.create_someone(Entities, "gentil", "Rogue", "Je n'ai pas d'idée de nom", image("img/rogue.png"))
+rogue.image.load_with_color_filter(WHITE)
+rogue.image.resize((50,50))
+#----------------------------------------------------------     
+
+orc = refait.create_someone(Entities, "mechant", "Orc", "Azog", image("img/orc.png"))
+orc.image.load_with_color_filter(WHITE)
+orc.image.resize((50,50))
+#----------------------------------------------------------     
+
+ghost = refait.create_someone(Entities, "mechant", "Ghost", "Bill", image("img/ghost.png"))
+ghost.image.load_with_color_filter(WHITE)
+ghost.image.resize((50,50))
+#----------------------------------------------------------  
+cursed_knight = refait.create_someone(Entities, "mechant", "Cursed_Knight", "Lancelot du lac", image("img/cursed_knight.png"))
+cursed_knight.image.load_with_color_filter((76,76,76))
+cursed_knight.image.resize((50,50))
+#----------------------------------------------------------     
+
+mad_king = refait.create_someone(Entities, "hardcore", "Mad_King", "Aerys II Targaryen", image("img/mad_king.png"))
+mad_king.image.load_with_color_filter(WHITE)
+mad_king.image.resize((50,50))
+#----------------------------------------------------------
+ 
+goblin = refait.create_someone(Entities, "hardcore", "Goblin_Team", "Je n'ai toujours pas d'idée de nom xD", image("img/goblin.png"))
+goblin.image.load_with_color_filter((58,58,58))
+goblin.image.resize((50,50))
+#----------------------------------------------------------     
+#------------------------------------------------------------------------------------------------------------
+#------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------------------
 
 #                                        Les icones (= les sélecteurs)
 
-# création des images qui vont être utilisée :
-img_gentil = pygame.Surface((50,50))
-img_gentil.fill(window.ICON_COLOR) # création de l'image des icones et remplissage de celle-ci
-
-mechant_img = pygame.Surface((50,50))
-mechant_img.fill(YELLOW) # création de l'image des icones et remplissage de celle-ci
-
 # 2 listes qui vont contenir chacunes des icones
 icones_gentil = []
 icones_mechant = []
+icones_hardcore = []
 
     # on crée et on ajoute (avec la fonction "add_icon_to_list") 3 icones à la liste "icones_gentil" 
 window.add_icon_to_list(icones_gentil, knight.image.picture, pygame.Rect(0, 0, 50, 50), BLACK, icon_mark_wait_color, knight) 
-window.add_icon_to_list(icones_gentil, img_gentil, pygame.Rect(60, 0, 50, 50), BLACK, icon_mark_wait_color)
-window.add_icon_to_list(icones_gentil, img_gentil, pygame.Rect(120, 0, 50, 50), BLACK, icon_mark_wait_color)
+window.add_icon_to_list(icones_gentil, mage.image.picture, pygame.Rect(60, 0, 50, 50), BLACK, icon_mark_wait_color, mage)
+window.add_icon_to_list(icones_gentil, rogue.image.picture, pygame.Rect(120, 0, 50, 50), BLACK, icon_mark_wait_color, rogue)
     # on crée et on ajoute (avec la fonction "add_icon_to_list") 3 icones à la liste "icones_mechant" 
-window.add_icon_to_list(icones_mechant, mechant_img, pygame.Rect(0, 60, 50, 50), BLACK, icon_mark_wait_color)
-window.add_icon_to_list(icones_mechant, mechant_img, pygame.Rect(60, 60, 50, 50), BLACK, icon_mark_wait_color)
-window.add_icon_to_list(icones_mechant, mechant_img, pygame.Rect(120, 60, 50, 50), BLACK, icon_mark_wait_color)
+window.add_icon_to_list(icones_mechant, orc.image.picture, pygame.Rect(0, 60, 50, 50), BLACK, icon_mark_wait_color, orc)
+window.add_icon_to_list(icones_mechant, ghost.image.picture, pygame.Rect(60, 60, 50, 50), BLACK, icon_mark_wait_color, ghost)
+window.add_icon_to_list(icones_mechant, cursed_knight.image.picture, pygame.Rect(120, 60, 50, 50), BLACK, icon_mark_wait_color, cursed_knight)
+    # on crée et on ajoute (avec la fonction "add_icon_to_list") 2 icones à la liste "icones_hardcore" 
+window.add_icon_to_list(icones_hardcore, mad_king.image.picture, pygame.Rect(0, 120, 50, 50), BLACK, icon_mark_wait_color, mad_king)
+window.add_icon_to_list(icones_hardcore, goblin.image.picture, pygame.Rect(60, 120, 50, 50), BLACK, icon_mark_wait_color, goblin)
+
 
     # on regroupe les icônes contenues dans la liste "icones_gentil" ensemble
 window.create_class_icons_from_the_icon_list(icones_gentil)
     # on fait la même chose pour la liste "icones_mechant"
 window.create_class_icons_from_the_icon_list(icones_mechant)
+    # on fait la même chose pour la liste "icones_hardcore"
+window.create_class_icons_from_the_icon_list(icones_hardcore)
+
 # /!\
 # /!\   L'ORDRE a de l'IMPORTANCE : premier ajoutés = "au-dessus" des autres (voir plus bas les fonctions "window.icons_change_top/bottom()")
 # /!\
@@ -84,7 +119,7 @@ validation_rect = pygame.Rect((800, 200), (70, 20))
 window.add_a_new_rect(character_rect, WHITE)
 window.add_a_new_rect(ideology_rect, WHITE)
 
-window.add_a_new_button(Button(validation_rect, [BLUE, RED, YELLOW], BLUE, ['first text', 'second text'], 'first text'))
+window.add_a_new_button(Button(validation_rect, [BLUE, RED, YELLOW], RED, ['first text', 'second text'], 'first text'))
 
 while window.running:
     if window.get_button_color(validation_rect) == BLUE:
@@ -113,3 +148,11 @@ while window.running:
     window.draw_buttons()
     window.icons_draw()
     window.update_screen_rects()
+
+
+
+
+"""
+une_image = pygame.Surface((50,50))
+une_image.fill(COULEUR) # création d'une image et remplissage de celle-ci
+"""
