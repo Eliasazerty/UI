@@ -188,10 +188,17 @@ class main: # pour pouvoir tout gérer
     
     # fonction pour pouvoir détecter la sélection d'un bouton:
     def buttons_detect_collision(self, mouse_pos):
-        for button in self.button_list:
-            if button[0].detect_collision(mouse_pos): # si un bouton est "touché"
+        for button_characteristics in self.button_list:
+            if button_characteristics[0].detect_collision(mouse_pos): # si un bouton est "touché"
                 return                             # on quitte la fonction (la souris est à un seul endroit à la fois) = optimisation
 
+    def get_button_color(self, rect):
+        for button_characteristics in self.button_list:
+            if button_characteristics[0].rect == rect:
+                return button_characteristics[0].get_color()
+    
+    def get_button_list(self):
+        return self.button_list
     # fonction pour afficher les infos de l'icone en sélection
 
     def get_icon_info(self):

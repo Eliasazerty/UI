@@ -87,6 +87,8 @@ window.add_a_new_rect(ideology_rect, WHITE)
 window.add_a_new_button(Button(validation_rect, [BLUE, RED, YELLOW], BLUE, ['first text', 'second text'], 'first text'))
 
 while window.running:
+    if window.get_button_color(validation_rect) == BLUE:
+        print("BLEU est activé!!!!")
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             window.running = False
