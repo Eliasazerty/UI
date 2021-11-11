@@ -62,16 +62,13 @@ class Button:
             self.change_color()
             self.change_text()
             return True
+        return False
 
 class icon: # = 1 icône qui peut être mise en relation avec d'autres grâce à la classe "icons"
-    def __init__(self, img, rect, screen, mark_color, background_color, mark_thickness, mark_wait_color, Entity):
+    def __init__(self, img, rect, screen, mark_color, mark_thickness, mark_wait_color, Entity):
         self.img = img
         self.rect = rect
         self.mark_color = mark_color #(140, 140, 137) # = Gris
-        if background_color == mark_color:
-            print("WARNING: background color is the same as the mark color !")
-        elif background_color == mark_wait_color:
-            print("WARNING: background color is the same as the mark wait color !")
         self.screen = screen
         self.mark_thickness = mark_thickness
         self.mark_wait_color = mark_wait_color
@@ -137,17 +134,15 @@ class icons: # = 1 groupe de plusieurs icônes
             self.activated_icon_index = self.number_of_icons-1 # si on ne peut pas "aller" plus à gauche, on retourne à la fin
 
 class main: # pour pouvoir tout gérer
-    def __init__(self, screen_size, ecartement, background_color, icon_color, icon_mark_color, mark_thickness):
+    def __init__(self, screen, icon_mark_color, mark_thickness, bg_img):
 
         # constantes
-        self.SCREEN_SIZE = screen_size
-        self.ECARTEMENT = ecartement
-        self.BACKGROUND_COLOR = background_color
-        self.ICON_COLOR = icon_color
+        self.SCREEN_SIZE = screen.get_size()
         self.ICON_MARK_COLOR = icon_mark_color
         self.MARK_THICKNESS = mark_thickness
+        self.BG_IMG = bg_img
+        self.screen = screen
         # variables utiles dans tout le programme
-        self.screen = pygame.display.set_mode(self.SCREEN_SIZE)
         self.running = True
         self.rects_list = []  # [RECT, COLOR, FILL]
         self.button_list = [] # [<class 'Button'>, FILL]
@@ -159,7 +154,7 @@ class main: # pour pouvoir tout gérer
     
  #                                                   [+] default: mark_color = self.ICON_MARK_COLOR
     def add_icon_to_list(self, icon_list, img, rect, mark_color, mark_wait_color, Entity = False): 
-        icon_list.append(icon(img, rect, self.screen, mark_color, self.BACKGROUND_COLOR, self.MARK_THICKNESS, mark_wait_color, Entity))
+        icon_list.append(icon(img, rect, self.screen, mark_color, self.MARK_THICKNESS, mark_wait_color, Entity))
 
     def create_class_icons_from_the_icon_list(self, icon_list):
         self.all_icons.append(icons(icon_list))
@@ -184,7 +179,7 @@ class main: # pour pouvoir tout gérer
         pygame.display.flip() 
 
     def blit_screen(self):  # afficher le fond d'écran
-        self.screen.fill(self.BACKGROUND_COLOR)
+        self.screen.blit(self.BG_IMG.picture, (0,0))
     
     # fonction pour pouvoir détecter la sélection d'un bouton:
     def buttons_detect_collision(self, mouse_pos):

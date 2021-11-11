@@ -19,7 +19,6 @@ BLACK = (0,0,0)
 # --petits parametres pour être plus lisible--
 ecartement = 10 # = 10 px du bord // des autres objets // ...    ====> uniquement pour la "mise en page" (=pas obligatoire d'utiliser ce parmatres, mais peut etre utile)
 bg_color = GREY # GRIS
-icon_color = BLUE
 mark_thickness = 7
 screen_size = (940, 400)
 icon_mark_color = BLACK
@@ -27,9 +26,14 @@ icon_mark_wait_color = (76, 84, 81) # kinda RED
 # ---------------------------------------------
 
 pygame.init()
+screen = pygame.display.set_mode(screen_size)
+
+fond = image("img/fond.jpg")
+fond.load()
+fond.resize(screen_size)
 
 # création de la fenetre avec les paramètres définis au-dessus
-window = main(screen_size, ecartement, bg_color, icon_color, icon_mark_color, mark_thickness)
+window = main(screen, icon_mark_color, mark_thickness, fond)
 #------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------------------
 #------------------------------------------------------------------------------------------------------------
@@ -111,7 +115,7 @@ window.create_class_icons_from_the_icon_list(icones_hardcore)
 
 
 # Choix de la disposition et de la taille des éléments sur l'écran, de la façon la plus modulable possible (= en fonction de la taille de la fenetre)
-character_rect = pygame.Rect((int(window.ECARTEMENT), int(window.ECARTEMENT)), (int(window.SCREEN_SIZE[0]/2.5), int(window.SCREEN_SIZE[1]*0.75))) # (x,y),(width, height)
+character_rect = pygame.Rect((int(ecartement), int(ecartement)), (int(window.SCREEN_SIZE[0]/2.5), int(window.SCREEN_SIZE[1]*0.75))) # (x,y),(width, height)
 ideology_rect = pygame.Rect((character_rect.x, 2*character_rect.y+character_rect.height), (character_rect.width, window.SCREEN_SIZE[1]-(3*character_rect.y+character_rect.height)))
 validation_rect = pygame.Rect((800, 200), (70, 20))
 
@@ -119,7 +123,7 @@ validation_rect = pygame.Rect((800, 200), (70, 20))
 window.add_a_new_rect(character_rect, WHITE)
 window.add_a_new_rect(ideology_rect, WHITE)
 
-window.add_a_new_button(Button(validation_rect, [BLUE, RED, YELLOW], RED, ['first text', 'second text'], 'first text'))
+window.add_a_new_button(Button(validation_rect, [BLUE, RED, YELLOW], RED, ['first text', 'second text'], 'second text'))
 
 while window.running:
     if window.get_button_color(validation_rect) == BLUE:
@@ -148,11 +152,3 @@ while window.running:
     window.draw_buttons()
     window.icons_draw()
     window.update_screen_rects()
-
-
-
-
-"""
-une_image = pygame.Surface((50,50))
-une_image.fill(COULEUR) # création d'une image et remplissage de celle-ci
-"""
